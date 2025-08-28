@@ -76,6 +76,9 @@ echo "⏳ Backing up the database..."
 docker exec "$IN_DB_CONTAINER" mysqldump --no-tablespaces -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" "$DB_DATABASE" | gzip > "$TEMP_DIR/db_backup.sql.gz"
 echo "✅ Database backup complete."
 
+BACKUP_SIZE=$(du -h "$TEMP_DIR/db_backup.sql.gz" | cut -f1)
+echo "✅ Database backup complete. Size: $BACKUP_SIZE"
+
 # 2. Back up the Files
 # We use 'docker cp' to copy the essential storage directories from
 # the app container to our temporary backup directory on the host.
@@ -105,7 +108,8 @@ echo "✅ Cleanup complete."
 # 5. Prune Old Backups
 # Find and delete any backup archives older than the specified KEEP_DAYS.
 echo "🗑️ Pruning old backups (older than $KEEP_DAYS days)..."
-find "$BACKUP_BASE_DIR" -type f -name "*.tar.gz" -mtime +"$KEEP_DAYS" -delete
+find "$BACKUP_BASE_DIR" -type f -name "invoiceninja_backup_*.tar.gz" -mtime +"$KEEP_DAYS" -delete
 echo "✅ Pruning complete."
 
 echo "🎉 Backup process finished successfully!"
+echo "📦 Backup saved to: $FINAL_ARCHIVE"
