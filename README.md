@@ -110,3 +110,26 @@ Change Owner and permissions
 ```
   sudo chown -R user:user /path/folder
 ```
+
+Cronjob!
+
+Run the following
+
+```
+sudo crontab -e
+```
+Select your edit (I like nano)
+
+Copy and paste the following
+
+```
+  # InvoiceNinja backup - runs daily at 2:00 AM
+  0 2 * * * /path/to/docker/invoiceninja/backup.sh >> /var/log/invoiceninja-backup.log 2>&1
+```
+Save and close
+
+Verify its there
+```
+sudo crontab -l
+```
+It should show the cronjob you created.
